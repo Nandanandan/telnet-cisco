@@ -93,8 +93,17 @@ def telnet_to_device(host_ip, username, password, commands):
         tn.write(password.encode('ascii') + b"\n")
     else:
         print('Password must be provided')
-        password = getpass.getpass("Please enter password")
+        password = getpass.getpass("Please enter password:")
         tn.write(password.encode('ascii') + b"\n")
+
+    tn.write(b"enable\n")
+    tn.read_until(b"Password: ")
+    if epass:
+        tn.write(epass.encode('ascii') + b"\n")
+    else:
+        print('Enable Password must be provided')
+        epass = getpass.getpass("Please enter password:")
+        tn.write(epass.encode('ascii') + b"\n")
 
     for command in commands:
         tn.write(commands[command].encode('ascii') + b"\n")
