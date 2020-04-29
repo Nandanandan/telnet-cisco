@@ -1,9 +1,10 @@
-# import telnetlib
+import telnetlib
 # from login_data import creds
 import pandas as pd
 import os
 import xlsxwriter
 import diffios
+import getpass
 
 
 """
@@ -85,9 +86,16 @@ def telnet_to_device(host_ip, username, password, commands):
     if username:
         tn.read_until(b"Username: ")
         tn.write(username.encode('ascii') + b"\n")
+    else:
+        print('username not required or provided')
+    tn.read_until(b"Password: ")
     if password:
-        tn.read_until(b"Password: ")
         tn.write(password.encode('ascii') + b"\n")
+    else:
+        print('Password must be provided')
+        password = getpass.getpass("Please enter password")
+        tn.write(password.encode('ascii') + b"\n")
+
     for command in commands:
         tn.write(commands[command].encode('ascii') + b"\n")
     tn.write(b"exit\n")
@@ -134,13 +142,13 @@ def primary_task():
                         "command2": "show int description"
                        }
             precheck_data = telnet_to_device(host_ip, username, password, check_cmd)
-            with open(precheck_file, "w") as pref:
+            with open(precheck_file, "w+") as pref:
                 pref.write(precheck_data)
 
-            execution_cmd = {}
-            execution_data = telnet_to_device(host_ip, username, password, execution_cmd)
-            with open(ex_data_file, "w") as pref:
-                pref.write(execution_data)
+            # execution_cmd = {}
+            # execution_data = telnet_to_device(host_ip, username, password, execution_cmd)
+            # with open(ex_data_file, "w") as pref:
+            #     pref.write(execution_data)
 
         else:
             worksheet.write(row, 0, host_ip)
@@ -148,6 +156,7 @@ def primary_task():
             print(f"{host_ip} is not reachable.")
     workbook.close()
 
+# execution of task starts here
 if __name__ == "__main__":
     primary_task()
 
