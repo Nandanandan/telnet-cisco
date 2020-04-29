@@ -7,6 +7,8 @@ import diffios
 import getpass
 
 
+# Variables defined here
+
 """
 file path + name of the input file
 Data of input file contains destination ip and telnet credentials.
@@ -14,65 +16,23 @@ Data of input file contains destination ip and telnet credentials.
 """
 
 input_file = "device_input_data.xlsx"
-output_file = "diff_file"
-precheck_file = "precheck_file"
-postcheck_file = "postcheck_file"
-
-
 
 def ping_check(host_ip):
+    '''Ping to host_ip and return boolean output'''
     response = os.system("ping -c 2 " + host_ip)
     if response == 0:
         return True
     else:
         return False
 
-
-# def data_io(host_ip):
-#
-#     """
-#     read data from input excelfile.
-#     check ping response to ip addresses mentioned on input file.
-#     create a new output file and add IP, reachability status to the file.
-#
-#     """
-#     of = "output_file.xlsx"
-#     workbook = xlsxwriter.Workbook(of)
-#     worksheet = workbook.add_worksheet()
-#     worksheet.write(0, 0, "IP ADDRESS")
-#     worksheet.write(0, 1, "Reachability")
-#     worksheet.write(0, 2, "Config change")
-#
-#     row = 1
-#     if headers == "IP":
-#         if response == 0:
-#             datawrite = "YES"
-#             print("device is reachable")
-#         else:
-#             datawrite = "NO"
-#             print("device is not reachable")
-#         worksheet.write(row,0, device_ip)
-#         worksheet.write(row,1, datawrite)
-#     workbook.close()
-
-# def get_input_data():
-#     read_file = pd.read_excel(file_name, sheet_name='Sheet1', na_values=None, keep_default_na=False)
-#     my_list = []
-#     for index in read_file.index:
-#         my_list = []
-#         for headers in read_file.columns:
-#              my_list.append(read_file[headers][index])
-#     return my_list
-
-
-def compare_config(precheck_file, postcheck_file):
+def compare_config(precheck_file, postcheck_file,host_ip):
     '''
 
     This section of code is used to compare configuration before and after change.
     Post comparision it sill share output with listed changes.
 
     '''
-
+    output_file = host_ip + "_config_diff_file"
     diff_config = diffios.Compare(precheck_file, postcheck_file)
     with open(output_file, "a+") as diff:
         diff.writelines(diff_config.delta())
@@ -152,17 +112,25 @@ def primary_task():
                         "command2": "show int description"
                        }
             precheck_data = telnet_to_device(host_ip, username, password, check_cmd)
+            precheck_file = host_ip + "precheck_file.txt"
             with open(precheck_file, "w+") as pref:
                 pref.write(precheck_data)
-
+# Following code is under test
             # execution_cmd = {}
+            # ex_data_file = host_ip + "_execution_file.txt"
             # execution_data = telnet_to_device(host_ip, username, password, execution_cmd)
             # with open(ex_data_file, "w") as pref:
             #     pref.write(execution_data)
-
+            # worksheet.write(row, 2, "Yes")
+            # postcheck_data = telnet_to_device(host_ip, username, password, check_cmd)
+            # postcheck_file = host_ip + "_postcheck_file.txt"
+            # with open(precheck_file, "w+") as pref:
+            #     pref.write(postcheck_data)
+            # compare_config(precheck_file, postcheck_file,host_ip)
         else:
             worksheet.write(row, 0, host_ip)
             worksheet.write(row, 1, "No")
+            worksheet.write(row, 2, "No")
             print(f"{host_ip} is not reachable.")
     workbook.close()
 
