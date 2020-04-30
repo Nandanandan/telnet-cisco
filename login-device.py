@@ -68,7 +68,7 @@ def telnet_to_device(host_ip, username, password, commands):
         tn.write(epass.encode('ascii') + b"\n")
 
     for command in commands:
-        tn.write(commands[command].encode('ascii') + b"\n")
+        tn.write(command.encode('ascii') + b"\n")
     tn.write(b"exit\n")
 
     data = tn.read_all().decode('ascii')
