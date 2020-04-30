@@ -64,7 +64,7 @@ def telnet_to_device(host_ip, username, password, commands):
         tn.write(epass.encode('ascii') + b"\n")
     else:
         print('\n---Enable Password must be provided---\n')
-        epass = getpass.getpass("Please enter password:")
+        epass = getpass.getpass("Please enter Enable password:")
         tn.write(epass.encode('ascii') + b"\n")
 
     for command in commands:
@@ -89,6 +89,7 @@ def primary_task():
     execute Part 01.
     If ping result is success then execute telnet code to do necessary config changes.
     """
+    os.mkdir('output_data')
     of = "output_file.xlsx"
     workbook = xlsxwriter.Workbook(of)
     worksheet = workbook.add_worksheet()
@@ -132,6 +133,7 @@ def primary_task():
             worksheet.write(row, 2, "No")
             print(f"---: {host_ip} is not reachable.")
     workbook.close()
+    print("\n\n---: Script execution completed:")
 
 # execution of task starts here
 if __name__ == "__main__":
