@@ -1,0 +1,5 @@
+configure terminal
+interface gi1/0/10
+desc "configured by python"
+exit
+exit

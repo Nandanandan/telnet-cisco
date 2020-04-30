@@ -16,6 +16,7 @@ Data of input file contains destination ip and telnet credentials.
 """
 
 input_file = "device_input_data.xlsx"
+command_file = 'config'
 
 def ping_check(host_ip):
     '''Ping to host_ip and return boolean output'''
@@ -107,26 +108,24 @@ def primary_task():
             worksheet.write(row, 1, "Yes")
             print(f"{host_ip} is reachable, proceeding for config changes")
 # Precheck commands to be executed on device
-            check_cmd = {
-                        "command1": "terminal length 0",
-                        "command2": "show int description"
-                       }
+            check_cmd = [ "terminal length 0","show int description"]
             precheck_data = telnet_to_device(host_ip, username, password, check_cmd)
             precheck_file = host_ip + "precheck_file.txt"
             with open(precheck_file, "w+") as pref:
                 pref.write(precheck_data)
 # Following code is under test
-            # execution_cmd = {}
-            # ex_data_file = host_ip + "_execution_file.txt"
-            # execution_data = telnet_to_device(host_ip, username, password, execution_cmd)
-            # with open(ex_data_file, "w") as pref:
-            #     pref.write(execution_data)
-            # worksheet.write(row, 2, "Yes")
-            # postcheck_data = telnet_to_device(host_ip, username, password, check_cmd)
-            # postcheck_file = host_ip + "_postcheck_file.txt"
-            # with open(precheck_file, "w+") as pref:
-            #     pref.write(postcheck_data)
-            # compare_config(precheck_file, postcheck_file,host_ip)
+            with open(command_file, "r") as cmd:
+                execution_cmd = cmd.readlines()
+            ex_data_file = host_ip + "_execution_file.txt"
+            execution_data = telnet_to_device(host_ip, username, password, execution_cmd)
+            with open(ex_data_file, "w") as pref:
+                pref.write(execution_data)
+            worksheet.write(row, 2, "Yes")
+            postcheck_data = telnet_to_device(host_ip, username, password, check_cmd)
+            postcheck_file = host_ip + "_postcheck_file.txt"
+            with open(precheck_file, "w+") as pref:
+                pref.write(postcheck_data)
+            compare_config(precheck_file, postcheck_file,host_ip)
         else:
             worksheet.write(row, 0, host_ip)
             worksheet.write(row, 1, "No")
