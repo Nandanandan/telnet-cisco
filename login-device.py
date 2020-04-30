@@ -48,13 +48,13 @@ def telnet_to_device(host_ip, username, password, commands):
         tn.read_until(b"Username: ")
         tn.write(username.encode('ascii') + b"\n")
     else:
-        print('username not required or provided')
+        print('\n---username not required or provided---\n')
     tn.read_until(b"Password: ")
     if password:
         tn.write(password.encode('ascii') + b"\n")
     else:
-        print('Password must be provided')
-        password = getpass.getpass("Please enter password:")
+        print('\n---Login Password must be provided---\n')
+        password = getpass.getpass("Please enter login password:")
         tn.write(password.encode('ascii') + b"\n")
 
     tn.write(b"enable\n")
@@ -63,7 +63,7 @@ def telnet_to_device(host_ip, username, password, commands):
     if epass:
         tn.write(epass.encode('ascii') + b"\n")
     else:
-        print('Enable Password must be provided')
+        print('\n---Enable Password must be provided---\n')
         epass = getpass.getpass("Please enter password:")
         tn.write(epass.encode('ascii') + b"\n")
 
@@ -106,11 +106,11 @@ def primary_task():
         if ping_result:
             worksheet.write(row, 0, host_ip)
             worksheet.write(row, 1, "Yes")
-            print(f"{host_ip} is reachable, proceeding for config changes")
+            print(f"\n\n---: {host_ip} is reachable, proceeding for config changes\n")
 # Precheck commands to be executed on device
             check_cmd = [ "terminal length 0","show int description"]
             precheck_data = telnet_to_device(host_ip, username, password, check_cmd)
-            precheck_file = host_ip + "precheck_file.txt"
+            precheck_file = host_ip + "_precheck_file.txt"
             with open(precheck_file, "w+") as pref:
                 pref.write(precheck_data)
 # Following code is under test
@@ -123,14 +123,14 @@ def primary_task():
             worksheet.write(row, 2, "Yes")
             postcheck_data = telnet_to_device(host_ip, username, password, check_cmd)
             postcheck_file = host_ip + "_postcheck_file.txt"
-            with open(precheck_file, "w+") as pref:
+            with open(postcheck_file, "w+") as pref:
                 pref.write(postcheck_data)
             compare_config(precheck_file, postcheck_file,host_ip)
         else:
             worksheet.write(row, 0, host_ip)
             worksheet.write(row, 1, "No")
             worksheet.write(row, 2, "No")
-            print(f"{host_ip} is not reachable.")
+            print(f"---: {host_ip} is not reachable.")
     workbook.close()
 
 # execution of task starts here
