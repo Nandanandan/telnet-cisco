@@ -16,6 +16,7 @@ import os
 import xlsxwriter
 import diffios
 import getpass
+import time
 
 
 # Variables defined here
@@ -28,6 +29,8 @@ Data of input file contains destination ip and telnet credentials.
 
 input_file = "device_input_data.xlsx"
 command_file = 'config'
+output_file = "output_file.xlsx"
+output_dir = 'output_data'
 
 def ping_check(host_ip):
     '''Ping to host_ip and return boolean output'''
@@ -44,9 +47,9 @@ def compare_config(precheck_file, postcheck_file,host_ip):
     Post comparision it sill share output with listed changes.
 
     '''
-    output_file = host_ip + "_config_diff_file"
+    diff_file = os.path.join(output_dir, + host_ip + "_config_diff_file_" + time.strftime("%Y%m%d-%H%M%S"))
     diff_config = diffios.Compare(precheck_file, postcheck_file)
-    with open(output_file, "a+") as diff:
+    with open(diff_file, "a+") as diff:
         diff.writelines(diff_config.delta())
 
 def telnet_to_device(host_ip, username, password,epass, commands):
@@ -100,8 +103,7 @@ def primary_task():
     execute Part 01.
     If ping result is success then execute telnet code to do necessary config changes.
     """
-    output_file = "output_file.xlsx"
-    output_dir = 'output_data'
+
     if not os.path.isdir(output_dir): os.mkdir(output_dir)
     of = os.path.join(output_dir, output_file)
     workbook = xlsxwriter.Workbook(of)
@@ -125,19 +127,19 @@ def primary_task():
             try:
                 check_cmd = [ "terminal length 0","show int description"]
                 precheck_data = telnet_to_device(host_ip, username, password, epass, check_cmd)
-                precheck_file = os.path.join(output_dir, host_ip + "_precheck_file.txt")
+                precheck_file = os.path.join(output_dir, host_ip + "_precheck_file.txt" + time.strftime("%Y%m%d-%H%M%S"))
                 with open(precheck_file, "w+") as pref:
                     pref.write(precheck_data)
     # Following code is under test
                 with open(command_file, "r") as cmd:
                     execution_cmd = cmd.readlines()
-                ex_data_file = os.path.join(output_dir, host_ip + "_execution_file.txt")
+                ex_data_file = os.path.join(output_dir, host_ip + "_execution_file.txt" + time.strftime("%Y%m%d-%H%M%S"))
                 execution_data = telnet_to_device(host_ip, username, password, epass, execution_cmd)
                 with open(ex_data_file, "w") as pref:
                     pref.write(execution_data)
                 worksheet.write(row, 2, "Yes")
                 postcheck_data = telnet_to_device(host_ip, username, password, epass, check_cmd)
-                postcheck_file = os.path.join(output_dir, host_ip + "_postcheck_file.txt")
+                postcheck_file = os.path.join(output_dir, host_ip + "_postcheck_file.txt" + time.strftime("%Y%m%d-%H%M%S"))
                 with open(postcheck_file, "w+") as pref:
                     pref.write(postcheck_data)
                 compare_config(precheck_file, postcheck_file,host_ip)
