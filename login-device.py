@@ -47,7 +47,7 @@ def compare_config(precheck_file, postcheck_file,host_ip):
     Post comparision it sill share output with listed changes.
 
     '''
-    diff_file = os.path.join(output_dir, + host_ip + "_config_diff_file_" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
+    diff_file = os.path.join(output_dir, host_ip + "_config_diff_file_" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
     diff_config = diffios.Compare(precheck_file, postcheck_file)
     with open(diff_file, "a+") as diff:
         diff.writelines(diff_config.delta())
