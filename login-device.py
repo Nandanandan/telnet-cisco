@@ -113,7 +113,7 @@ def primary_task():
         inventory = []
         for headers in read_file.columns:
             inventory.append(read_file[headers][index])
-        host_ip, username, password = inventory
+        host_ip, username, password, epass = inventory
         ping_result = ping_check(host_ip)
         if ping_result:
             worksheet.write(row, 0, host_ip)
