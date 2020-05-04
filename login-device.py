@@ -10,7 +10,6 @@ Compare before after config change: Done
 """
 
 import telnetlib
-# from login_data import creds
 import pandas as pd
 import os
 import xlsxwriter
@@ -118,6 +117,7 @@ def primary_task():
         for headers in read_file.columns:
             inventory.append(read_file[headers][index])
         host_ip, username, password, epass = inventory
+        # host_ip, username, password, epass, region = inventory
         ping_result = ping_check(host_ip)
         if ping_result:
             worksheet.write(row, 0, host_ip)
@@ -130,7 +130,7 @@ def primary_task():
                 precheck_file = os.path.join(output_dir, host_ip + "_precheck_file" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
                 with open(precheck_file, "w+") as pref:
                     pref.write(precheck_data)
-    # Following code is under test
+    # Following code is under testgit
                 with open(command_file, "r") as cmd:
                     execution_cmd = cmd.readlines()
                 ex_data_file = os.path.join(output_dir, host_ip + "_execution_file_" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
@@ -154,7 +154,7 @@ def primary_task():
             worksheet.write(row, 2, "No")
             print(f"---: {host_ip} is not reachable.")
     workbook.close()
-    print("\n\n---: Script execution completed:")
+    print("\n\n---: Script execution completed :---")
 
 # execution of task starts here
 if __name__ == "__main__":
