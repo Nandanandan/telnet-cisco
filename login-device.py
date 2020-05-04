@@ -1,3 +1,14 @@
+"""
+Objective of Code:
+
+Login to cisco devices with telnet: Done
+Get current config: Done
+Change configuration using telnet: Done
+Login to device using SSH(TELNET disabled after config change): Pending
+Compare before after config change: Done
+
+"""
+
 import telnetlib
 # from login_data import creds
 import pandas as pd
@@ -38,7 +49,7 @@ def compare_config(precheck_file, postcheck_file,host_ip):
     with open(output_file, "a+") as diff:
         diff.writelines(diff_config.delta())
 
-def telnet_to_device(host_ip, username, password, commands):
+def telnet_to_device(host_ip, username, password,epass, commands):
     """
     This section of code will help to telnet and execute commands on cisco devices and return
     """
@@ -56,15 +67,15 @@ def telnet_to_device(host_ip, username, password, commands):
         print('\n---Login Password must be provided---\n')
         password = getpass.getpass("Please enter login password:")
         tn.write(password.encode('ascii') + b"\n")
-
-    tn.write(b"enable\n")
-    tn.read_until(b"Password: ")
-    epass = ""
     if epass:
+        tn.write(b"enable\n")
+        tn.read_until(b"Password: ")
         tn.write(epass.encode('ascii') + b"\n")
     else:
         print('\n---Enable Password must be provided---\n')
         epass = getpass.getpass("Please enter Enable password:")
+        tn.write(b"enable\n")
+        tn.read_until(b"Password: ")
         tn.write(epass.encode('ascii') + b"\n")
 
     for command in commands:
@@ -109,24 +120,30 @@ def primary_task():
             worksheet.write(row, 1, "Yes")
             print(f"\n\n---: {host_ip} is reachable, proceeding for config changes\n")
 # Precheck commands to be executed on device
-            check_cmd = [ "terminal length 0","show int description"]
-            precheck_data = telnet_to_device(host_ip, username, password, check_cmd)
-            precheck_file = host_ip + "_precheck_file.txt"
-            with open(precheck_file, "w+") as pref:
-                pref.write(precheck_data)
-# Following code is under test
-            with open(command_file, "r") as cmd:
-                execution_cmd = cmd.readlines()
-            ex_data_file = host_ip + "_execution_file.txt"
-            execution_data = telnet_to_device(host_ip, username, password, execution_cmd)
-            with open(ex_data_file, "w") as pref:
-                pref.write(execution_data)
-            worksheet.write(row, 2, "Yes")
-            postcheck_data = telnet_to_device(host_ip, username, password, check_cmd)
-            postcheck_file = host_ip + "_postcheck_file.txt"
-            with open(postcheck_file, "w+") as pref:
-                pref.write(postcheck_data)
-            compare_config(precheck_file, postcheck_file,host_ip)
+            try:
+                check_cmd = [ "terminal length 0","show int description"]
+                precheck_data = telnet_to_device(host_ip, username, password, epass, check_cmd)
+                precheck_file = host_ip + "_precheck_file.txt"
+                with open(precheck_file, "w+") as pref:
+                    pref.write(precheck_data)
+    # Following code is under test
+                with open(command_file, "r") as cmd:
+                    execution_cmd = cmd.readlines()
+                ex_data_file = host_ip + "_execution_file.txt"
+                execution_data = telnet_to_device(host_ip, username, password, epass, execution_cmd)
+                with open(ex_data_file, "w") as pref:
+                    pref.write(execution_data)
+                worksheet.write(row, 2, "Yes")
+                postcheck_data = telnet_to_device(host_ip, username, password, epass, check_cmd)
+                postcheck_file = host_ip + "_postcheck_file.txt"
+                with open(postcheck_file, "w+") as pref:
+                    pref.write(postcheck_data)
+                compare_config(precheck_file, postcheck_file,host_ip)
+
+            except Exception as e:
+                print({f"Error for {host_ip}: \n", e})
+
+
         else:
             worksheet.write(row, 0, host_ip)
             worksheet.write(row, 1, "No")
