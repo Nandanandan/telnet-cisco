@@ -100,8 +100,10 @@ def primary_task():
     execute Part 01.
     If ping result is success then execute telnet code to do necessary config changes.
     """
-    os.mkdir('output_data')
-    of = "output_file.xlsx"
+    output_file = "output_file.xlsx"
+    output_dir = 'output_data'
+    if not os.path.isdir(output_dir): os.mkdir(output_dir)
+    of = os.path.join(output_dir, output_file)
     workbook = xlsxwriter.Workbook(of)
     worksheet = workbook.add_worksheet()
     worksheet.write(0, 0, "IP ADDRESS")
@@ -123,19 +125,19 @@ def primary_task():
             try:
                 check_cmd = [ "terminal length 0","show int description"]
                 precheck_data = telnet_to_device(host_ip, username, password, epass, check_cmd)
-                precheck_file = host_ip + "_precheck_file.txt"
+                precheck_file = os.path.join(output_dir, host_ip + "_precheck_file.txt")
                 with open(precheck_file, "w+") as pref:
                     pref.write(precheck_data)
     # Following code is under test
                 with open(command_file, "r") as cmd:
                     execution_cmd = cmd.readlines()
-                ex_data_file = host_ip + "_execution_file.txt"
+                ex_data_file = os.path.join(output_dir, host_ip + "_execution_file.txt")
                 execution_data = telnet_to_device(host_ip, username, password, epass, execution_cmd)
                 with open(ex_data_file, "w") as pref:
                     pref.write(execution_data)
                 worksheet.write(row, 2, "Yes")
                 postcheck_data = telnet_to_device(host_ip, username, password, epass, check_cmd)
-                postcheck_file = host_ip + "_postcheck_file.txt"
+                postcheck_file = os.path.join(output_dir, host_ip + "_postcheck_file.txt")
                 with open(postcheck_file, "w+") as pref:
                     pref.write(postcheck_data)
                 compare_config(precheck_file, postcheck_file,host_ip)
