@@ -47,7 +47,7 @@ def compare_config(precheck_file, postcheck_file,host_ip):
     Post comparision it sill share output with listed changes.
 
     '''
-    diff_file = os.path.join(output_dir, + host_ip + "_config_diff_file_" + time.strftime("%Y%m%d-%H%M%S"))
+    diff_file = os.path.join(output_dir, + host_ip + "_config_diff_file_" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
     diff_config = diffios.Compare(precheck_file, postcheck_file)
     with open(diff_file, "a+") as diff:
         diff.writelines(diff_config.delta())
@@ -127,19 +127,19 @@ def primary_task():
             try:
                 check_cmd = [ "terminal length 0","show int description"]
                 precheck_data = telnet_to_device(host_ip, username, password, epass, check_cmd)
-                precheck_file = os.path.join(output_dir, host_ip + "_precheck_file.txt" + time.strftime("%Y%m%d-%H%M%S"))
+                precheck_file = os.path.join(output_dir, host_ip + "_precheck_file" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
                 with open(precheck_file, "w+") as pref:
                     pref.write(precheck_data)
     # Following code is under test
                 with open(command_file, "r") as cmd:
                     execution_cmd = cmd.readlines()
-                ex_data_file = os.path.join(output_dir, host_ip + "_execution_file.txt" + time.strftime("%Y%m%d-%H%M%S"))
+                ex_data_file = os.path.join(output_dir, host_ip + "_execution_file_" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
                 execution_data = telnet_to_device(host_ip, username, password, epass, execution_cmd)
                 with open(ex_data_file, "w") as pref:
                     pref.write(execution_data)
                 worksheet.write(row, 2, "Yes")
                 postcheck_data = telnet_to_device(host_ip, username, password, epass, check_cmd)
-                postcheck_file = os.path.join(output_dir, host_ip + "_postcheck_file.txt" + time.strftime("%Y%m%d-%H%M%S"))
+                postcheck_file = os.path.join(output_dir, host_ip + "_postcheck_file_" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
                 with open(postcheck_file, "w+") as pref:
                     pref.write(postcheck_data)
                 compare_config(precheck_file, postcheck_file,host_ip)
