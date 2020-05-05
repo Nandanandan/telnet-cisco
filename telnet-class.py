@@ -119,7 +119,7 @@ class telnet:
             inventory = []
             for headers in read_file.columns:
                 inventory.append(read_file[headers][index])
-            host_ip, username, password, epass = inventory
+            host_ip, username, password, epass, region = inventory
             # host_ip, username, password, epass, region = inventory
             ping_result = self.ping_check(host_ip)
             if ping_result:
@@ -161,6 +161,7 @@ class telnet:
 
 # execution of task starts here
 if __name__ == "__main__":
-    telnet.primary_task()
+    task = telnet()
+    task.primary_task()
 
 
