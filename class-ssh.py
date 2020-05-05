@@ -11,7 +11,9 @@ class ssh:
         session.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client = session.connect(hostname=host_ip, username=username, password=password)
         stdin, stdout, stderr = client.exec_command('terminal length 0', 'show run')
+        client.close()
         return stdout
+
 
 if __name__ == "__main__":
     ip = input(r"IP:")
