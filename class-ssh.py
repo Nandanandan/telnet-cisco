@@ -10,12 +10,12 @@ class ssh:
         session = paramiko.SSHClient()
         session.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         client = session.connect(hostname=host_ip, username=username, password=password)
-        stdin, stdout, stderr = client.exec_command('show run')
+        stdin, stdout, stderr = client.exec_command('terminal length 0', 'show run')
         return stdout
 
 if __name__ == "__main__":
-    ip = getpass.getpass("IP:")
-    usern = getpass.getpass("user:")
+    ip = input(r"IP:")
+    usern = input(r"user:")
     passw = getpass.getpass("Pass:")
     data = ssh().ssh_device(ip,usern,passw)
     print(data)
