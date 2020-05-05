@@ -1,4 +1,5 @@
 import paramiko
+import getpass
 
 class ssh:
 
@@ -13,5 +14,8 @@ class ssh:
         return stdout
 
 if __name__ == "__main__":
-    data = ssh().ssh_device()
+    ip = getpass.getpass("IP:")
+    usern = getpass.getpass("user:")
+    passw = getpass.getpass("Pass:")
+    data = ssh().ssh_device(ip,usern,passw)
     print(data)
