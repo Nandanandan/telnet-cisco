@@ -30,6 +30,7 @@ input_file = "device_input_data.xlsx"
 command_file = 'config'
 output_file = "output_file.xlsx"
 output_dir = 'output_data'
+system_dir = 'system_data'
 
 def ping_check(host_ip):
     '''Ping to host_ip and return boolean output'''
@@ -104,6 +105,7 @@ def primary_task():
     """
 
     if not os.path.isdir(output_dir): os.mkdir(output_dir)
+    if not os.path.isdir(system_dir): os.mkdir(system_dir)
     of = os.path.join(output_dir, output_file)
     workbook = xlsxwriter.Workbook(of)
     worksheet = workbook.add_worksheet()
@@ -127,19 +129,19 @@ def primary_task():
             try:
                 check_cmd = [ "terminal length 0","show int description"]
                 precheck_data = telnet_to_device(host_ip, username, password, epass, check_cmd)
-                precheck_file = os.path.join(output_dir, host_ip + "_precheck_file" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
+                precheck_file = os.path.join(system_dir, host_ip + "_precheck_file" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
                 with open(precheck_file, "w+") as pref:
                     pref.write(precheck_data)
     # Following code is under testgit
                 with open(command_file, "r") as cmd:
                     execution_cmd = cmd.readlines()
-                ex_data_file = os.path.join(output_dir, host_ip + "_execution_file_" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
+                ex_data_file = os.path.join(system_dir, host_ip + "_execution_file_" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
                 execution_data = telnet_to_device(host_ip, username, password, epass, execution_cmd)
                 with open(ex_data_file, "w") as pref:
                     pref.write(execution_data)
                 worksheet.write(row, 2, "Yes")
                 postcheck_data = telnet_to_device(host_ip, username, password, epass, check_cmd)
-                postcheck_file = os.path.join(output_dir, host_ip + "_postcheck_file_" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
+                postcheck_file = os.path.join(system_dir, host_ip + "_postcheck_file_" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
                 with open(postcheck_file, "w+") as pref:
                     pref.write(postcheck_data)
                 compare_config(precheck_file, postcheck_file,host_ip)
