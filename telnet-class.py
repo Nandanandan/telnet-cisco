@@ -90,18 +90,23 @@ class telnet:
         data = tn.read_all().decode('ascii')
         return data
 
-    def ssh_device(self, host_ip, username, password, check_cmd):
-        device = {
-            'device_type': 'cisco_ios',
-            'host': host_ip,
-            'username': username,
-            'password': password,
-        }
-        commands = check_cmd
-        net_connect = ConnectHandler(**device)
-        for command in commands:
-            output = net_connect.send_command(command)
-        return output
+    def ssh_device(self, host_ip, username, password, check_cmd, ):
+
+            device = {
+                'device_type': 'cisco_ios',
+                'host': host_ip,
+                'username': username,
+                'password': password,
+            }
+            postcheck_file = os.path.join(self.system_dir,host_ip + "_postcheck_file_" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
+            try:
+                net_connect = ConnectHandler(**device)
+                with open(postcheck_file, "a+") as file:
+                    for i in range(len(check_cmd)):
+                        output = net_connect.send_command(commands[i])
+                        file.write(output)
+            finally:
+                net_connect.disconnect()
 
     def primary_task(self):
         """
@@ -155,7 +160,7 @@ class telnet:
                         pref.write(execution_data)
                     worksheet.write(row, 2, "Yes")
                     postcheck_data = self.telnet_to_device(host_ip, username, password, epass, check_cmd)
-                    postcheck_data = self.ssh_device(host_ip, username, password, check_cmd)
+                    # postcheck = self.ssh_device(host_ip, username, password, check_cmd)
                     postcheck_file = os.path.join(self.system_dir, host_ip + "_postcheck_file_" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
                     with open(postcheck_file, "w+") as pref:
                         pref.write(postcheck_data)
