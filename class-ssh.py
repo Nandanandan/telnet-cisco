@@ -12,7 +12,6 @@ class ssh:
         return output
 
 
-
 if __name__ == "__main__":
 
     ip = input(r"IP:")
