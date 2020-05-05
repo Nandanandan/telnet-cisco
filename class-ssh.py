@@ -7,10 +7,15 @@ class ssh:
         pass
 
     def ssh_device(self, **device):
-        net_connect = ConnectHandler(**device)
-        output = net_connect.send_command('show ip int brief')
-        return output
-
+        try:
+            net_connect = ConnectHandler(**device)
+            commands = ['show version', 'sh ip int brief']
+            with open('output_file', "a+") as file:
+                for i in range(len(commands)):
+                    output = net_connect.send_command(commands[i])
+                    file.write(output)
+        finally:
+            net_connect.disconnect()
 
 
 if __name__ == "__main__":
@@ -27,4 +32,4 @@ if __name__ == "__main__":
     }
     obj = ssh()
     data = obj.ssh_device(**device)
-    print(data)
+
