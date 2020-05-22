@@ -29,7 +29,7 @@ class telnet:
 
     def __init__(self):
         self.input_file = "device_input_data.xlsx"
-        self.command_file = 'config'
+        self.command_file = 'config_telnet'
         self.output_file = "output_file.xlsx"
         self.output_dir = 'output_data'
         self.system_dir = 'system_data'
@@ -162,12 +162,12 @@ class telnet:
                     with open(ex_data_file, "w") as pref:
                         pref.write(execution_data)
                     worksheet.write(row, 2, "Yes")
-                    postcheck_data = self.telnet_to_device(host_ip, username, password, epass, check_cmd)
-                    # postcheck = self.ssh_device(host_ip, username, password, check_cmd)
-                    postcheck_file = os.path.join(self.system_dir, host_ip + "_postcheck_file_" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
-                    with open(postcheck_file, "w+") as pref:
-                        pref.write(postcheck_data)
-                    self.compare_config(precheck_file, postcheck_file,host_ip)
+                    # postcheck_data = self.telnet_to_device(host_ip, username, password, epass, check_cmd)
+                    # # postcheck = self.ssh_device(host_ip, username, password, check_cmd)
+                    # postcheck_file = os.path.join(self.system_dir, host_ip + "_postcheck_file_" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
+                    # with open(postcheck_file, "w+") as pref:
+                    #     pref.write(postcheck_data)
+                    # self.compare_config(precheck_file, postcheck_file,host_ip)
 
                 except Exception as e:
                     print({f"Error for {host_ip}: \n", e})
