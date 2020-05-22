@@ -33,6 +33,7 @@ class telnet:
         self.output_file = "output_file.xlsx"
         self.output_dir = 'output_data'
         self.system_dir = 'system_data'
+        self.pcCmdFile = 'precheckcommands'
 
     def ping_check(self,host_ip):
         '''Ping to host_ip and return boolean output'''
@@ -91,6 +92,7 @@ class telnet:
         return data
 
     def ssh_device(self, host_ip, username, password, check_cmd, ):
+        # under development
 
             device = {
                 'device_type': 'cisco_ios',
@@ -103,7 +105,7 @@ class telnet:
                 net_connect = ConnectHandler(**device)
                 with open(postcheck_file, "a+") as file:
                     for i in range(len(check_cmd)):
-                        output = net_connect.send_command(commands[i])
+                        output = net_connect.send_command(check_cmd[i])
                         file.write(output)
             finally:
                 net_connect.disconnect()
@@ -137,7 +139,7 @@ class telnet:
             inventory = []
             for headers in read_file.columns:
                 inventory.append(read_file[headers][index])
-            host_ip, username, password, epass, region = inventory
+            host_ip, username, password, epass = inventory
             # host_ip, username, password, epass, region = inventory
             ping_result = self.ping_check(host_ip)
             if ping_result:
@@ -146,7 +148,8 @@ class telnet:
                 print(f"\n\n---: {host_ip} is reachable, proceeding for config changes\n")
     # Precheck commands to be executed on device
                 try:
-                    check_cmd = [ "terminal length 0","show int description"]
+                    with open(self.pcCmdFile, "r") as cmd:
+                        check_cmd = cmd.readlines()
                     precheck_data = self.telnet_to_device(host_ip, username, password, epass, check_cmd)
                     precheck_file = os.path.join(self.system_dir, host_ip + "_precheck_file" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
                     with open(precheck_file, "w+") as pref:
