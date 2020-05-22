@@ -16,7 +16,7 @@ import xlsxwriter
 import diffios
 import getpass
 import time
-
+# from login_data_sample import creds
 
 # Variables defined here
 
@@ -91,7 +91,7 @@ class telnet:
         data = tn.read_all().decode('ascii')
         return data
 
-    def ssh_device(self, host_ip, username, password, check_cmd, ):
+    def ssh_device(self, host_ip, username, password, check_cmd ):
         # under development
 
             device = {
@@ -101,6 +101,8 @@ class telnet:
                 'password': password,
             }
             postcheck_file = os.path.join(self.system_dir,host_ip + "_postcheck_file_" + time.strftime("%Y%m%d-%H%M%S") + "_.txt")
+
+            net_connect = ""
             try:
                 net_connect = ConnectHandler(**device)
                 with open(postcheck_file, "a+") as file:
@@ -140,6 +142,10 @@ class telnet:
             for headers in read_file.columns:
                 inventory.append(read_file[headers][index])
             host_ip, username, password, epass = inventory
+            # host_ip = creds['host_ip']
+            # username = creds['username']
+            # password = creds['password']
+            # epass = creds['epass']
             # host_ip, username, password, epass, region = inventory
             ping_result = self.ping_check(host_ip)
             if ping_result:

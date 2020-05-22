@@ -1,5 +1,6 @@
 
 creds =  { "host_ip": "addipaddress",
     "username": "writeusername",
-    "password": "writepassword"
+    "password": "writepassword",
+    "epass": "enablepassword"
     }

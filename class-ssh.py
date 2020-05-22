@@ -7,7 +7,7 @@ class ssh:
         pass
 
     def ssh_device(self, **device, execution_cmd):
-        net_connect = []
+        net_connect = ""
         try:
             net_connect = ConnectHandler(**device)
             with open('output_file', "a+") as file:
