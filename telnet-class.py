@@ -16,7 +16,7 @@ import xlsxwriter
 import diffios
 import getpass
 import time
-# from login_data_sample import creds
+from login_data import creds
 
 # Variables defined here
 
@@ -138,14 +138,14 @@ class telnet:
         read_file = pd.read_excel(self.input_file, sheet_name='Sheet1', na_values=None, keep_default_na=False)
         for index in read_file.index:
             row = index + 1
-            inventory = []
-            for headers in read_file.columns:
-                inventory.append(read_file[headers][index])
-            host_ip, username, password, epass = inventory
-            # host_ip = creds['host_ip']
-            # username = creds['username']
-            # password = creds['password']
-            # epass = creds['epass']
+            #inventory = []
+            #for headers in read_file.columns:
+            #    inventory.append(read_file[headers][index])
+            #host_ip, username, password, epass = inventory
+            host_ip = creds['host_ip']
+            username = creds['username']
+            password = creds['password']
+            epass = creds['epass']
             # host_ip, username, password, epass, region = inventory
             ping_result = self.ping_check(host_ip)
             if ping_result:
